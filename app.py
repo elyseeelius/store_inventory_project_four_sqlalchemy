@@ -55,7 +55,28 @@ def clean_price(price_str):
     else:
         return int(float_price * 100)
     
-    
+def clean_id(id_str,options):
+    try:
+        product_id = int(id_str)
+    except ValueError:
+        input('''
+                \n****** ID ERROR ******
+                \r The id should be a number.
+                \rPress enter to try again
+                \r**************************''')
+        return
+    else:
+        if product_id in options:
+            return product_id
+        else:
+             input(f'''
+                \n****** ID ERROR ******
+                \r Options: {options}
+                \rPress enter to try again
+                \r**************************''')
+        return
+
+
     
     
 
@@ -115,7 +136,20 @@ def app():
                 print(f'{product.id} | {product.product_name} | {product.product_price} | {product.product_quantity} | {product.date_updated}')
             input('\nPress enter to return to the main menu')
         elif choice == '3':
-            pass
+            id_options = []
+            for product in session.query(Product):
+                id_options.append(product.id)
+            id_error = True
+            while id_error:
+                id_choice = input(f'''
+                    \n Id Options: {id_options}
+                    \nProduct id: ''')
+                id_choice = clean_id(id_choice, id_options)
+                if type(id_choice) == int:
+                    id_error = False
+            the_product = session.query(Product).filter(Product.id== id_choice).first()
+            print(f'{the_product.product_name} | {the_product.product_quantity} | ${the_product.product_price /100} | {the_product.date_updated}')
+            input('\nPrint enter to return to themain menu')
         elif choice == '4':
             pass
         else:
