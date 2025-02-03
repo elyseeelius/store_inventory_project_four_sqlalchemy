@@ -111,7 +111,9 @@ def app():
             print('Product added to the inventory! ')
             time.sleep(1.5)
         elif choice == '2':
-            pass
+            for product in session.query(Product):
+                print(f'{product.id} | {product.product_name} | {product.product_price} | {product.product_quantity} | {product.date_updated}')
+            input('\nPress enter to return to the main menu')
         elif choice == '3':
             pass
         elif choice == '4':
@@ -128,6 +130,6 @@ if __name__ == "__main__":
     add_csv()
     app()
 
-    for product in session.query(Product):
-        print(product)
+    # for product in session.query(Product):
+    #     print(product)
    
