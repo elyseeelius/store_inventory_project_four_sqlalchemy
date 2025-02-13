@@ -8,18 +8,17 @@ import time
 def menu():
     while True:
         print('''\nPROGRAMMING BOOKS
-              \r1) Add books
-              \r2) View all books
-              \r3) Search for book
-              \r4) Book Analysis
-              \r5) Exit ''')
+              \r a) A - add a new product 
+              \r b) B : for back up work on it later
+              \r v) V : view the details of a single 
+              \r x) Exit ''')
         choice = input('What would you like to do? ')
-        if choice in ['1', '2','3','4','5']:
+        if choice in ['a', 'b','v', 'x']:
             return choice
         else:
             input('''
                   Please choose one of the options above.
-                  A number from 1 to 5
+                  a, b, v or x for exit
                   Please try again. ''')
 
 
@@ -95,23 +94,13 @@ def add_csv():
         session.commit()
 
         
-            
-
-
-
-
-
-
-
-
-
 
 
 def app():
     app_running = True
     while app_running:
         choice = menu()
-        if   choice == '1':
+        if   choice == 'a': # to add a product 
             product_name = input('Product name: ')
             price_error = True
             while price_error:
@@ -121,21 +110,21 @@ def app():
                     price_error = False
             product_quantity = input('Product quantity: ')
             date_error = True
-            while date_error:
-                date_updated = input('date updated(Ex: 11/1/2018): ')
-                date_updated = clean_date(date_updated)
-                if type(date_updated) == datetime.date:
-                    date_error = False
-            new_product = Product(product_name = product_name, product_price= product_price, product_quantity=product_quantity, date_updated = date_updated)
+            # while date_error:
+            #     date_updated = input('date updated(Ex: 11/1/2018): ')
+            #     date_updated = clean_date(date_updated)
+            #     if type(date_updated) == datetime.date:
+            #         date_error = False
+            new_product = Product(product_name = product_name, product_price= product_price, product_quantity=product_quantity)
             session.add(new_product)
             session.commit()
             print('Product added to the inventory! ')
             time.sleep(1.5)
-        elif choice == '2':
+        elif choice == 'b': # for the back up
             for product in session.query(Product):
                 print(f'{product.id} | {product.product_name} | {product.product_price} | {product.product_quantity} | {product.date_updated}')
             input('\nPress enter to return to the main menu')
-        elif choice == '3':
+        elif choice == 'v': # to view a single product.
             id_options = []
             for product in session.query(Product):
                 id_options.append(product.id)
@@ -150,8 +139,6 @@ def app():
             the_product = session.query(Product).filter(Product.id== id_choice).first()
             print(f'{the_product.product_name} | {the_product.product_quantity} | ${the_product.product_price /100} | {the_product.date_updated}')
             input('\nPrint enter to return to themain menu')
-        elif choice == '4':
-            pass
         else:
             print('GOODBYE!')
             app_running = False
