@@ -8,9 +8,9 @@ import time
 def menu():
     while True:
         print('''\nPROGRAMMING BOOKS
-              \r a) A - add a new product 
-              \r b) B : for back up work on it later
-              \r v) V : view the details of a single 
+              \r a) A - Add a new product to the database 
+              \r b) B - Make a backup of the entire inventory
+              \r v) V - View a single product's inventory
               \r x) Exit ''')
         choice = input('What would you like to do? ')
         if choice in ['a', 'b','v', 'x']:
@@ -74,20 +74,6 @@ def clean_id(id_str,options):
                 \rPress enter to try again
                 \r**************************''')
         return
- # this is the function the create the backup
-def create_backup():
-    with open('backup.csv', 'w', newline='') as csvfile:
-        fieldnames = ['product_name', 'product_price', 'product_quantity']
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        writer.writeheader()
-        for product in session.query(Product):
-            writer.writerow({
-                'product_name': product.product_name,
-                'product_price': product.product_price / 100,
-                'product_quantity': product.product_quantity,
-                # 'date_updated': product.date_updated.strftime('%m/%d/%Y')
-            })
-    print('Backup created successfully.')
 
     
     
@@ -105,6 +91,20 @@ def add_csv():
                 new_product = Product(product_name=product_name, product_price=product_price, product_quantity=product_quantity, date_updated= date_updated)
                 session.add(new_product)
         session.commit()
+ # this is the function the create the backup
+def create_backup():
+    with open('backup.csv', 'w', newline='') as csvfile:
+        fieldnames = ['product_name', 'product_price', 'product_quantity']
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer.writeheader()
+        for product in session.query(Product):
+            writer.writerow({
+                'product_name': product.product_name,
+                'product_price': product.product_price / 100,
+                'product_quantity': product.product_quantity,
+                # 'date_updated': product.date_updated.strftime('%m/%d/%Y')
+            })
+    print('Backup created successfully.')
 
         
 
@@ -123,19 +123,12 @@ def app():
                     price_error = False
             product_quantity = input('Product quantity: ')
             date_error = True
-            # while date_error:
-            #     date_updated = input('date updated(Ex: 11/1/2018): ')
-            #     date_updated = clean_date(date_updated)
-            #     if type(date_updated) == datetime.date:
-            #         date_error = False
             new_product = Product(product_name = product_name, product_price= product_price, product_quantity=product_quantity)
             session.add(new_product)
             session.commit()
             print('Product added to the inventory! ')
             time.sleep(1.5)
-        elif choice == 'b': # for the back up
-            # for product in session.query(Product):
-            #     print(f'{product.id} | {product.product_name} | {product.product_price} | {product.product_quantity} | {product.date_updated}')
+        elif choice == 'b': 
             create_backup()
             input('\nPress enter to return to the main menu')
         elif choice == 'v': # to view a single product.
