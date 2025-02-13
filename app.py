@@ -74,7 +74,20 @@ def clean_id(id_str,options):
                 \rPress enter to try again
                 \r**************************''')
         return
-
+ # this is the function the create the backup
+def create_backup():
+    with open('backup.csv', 'w', newline='') as csvfile:
+        fieldnames = ['product_name', 'product_price', 'product_quantity']
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer.writeheader()
+        for product in session.query(Product):
+            writer.writerow({
+                'product_name': product.product_name,
+                'product_price': product.product_price / 100,
+                'product_quantity': product.product_quantity,
+                # 'date_updated': product.date_updated.strftime('%m/%d/%Y')
+            })
+    print('Backup created successfully.')
 
     
     
@@ -121,8 +134,9 @@ def app():
             print('Product added to the inventory! ')
             time.sleep(1.5)
         elif choice == 'b': # for the back up
-            for product in session.query(Product):
-                print(f'{product.id} | {product.product_name} | {product.product_price} | {product.product_quantity} | {product.date_updated}')
+            # for product in session.query(Product):
+            #     print(f'{product.id} | {product.product_name} | {product.product_price} | {product.product_quantity} | {product.date_updated}')
+            create_backup()
             input('\nPress enter to return to the main menu')
         elif choice == 'v': # to view a single product.
             id_options = []
