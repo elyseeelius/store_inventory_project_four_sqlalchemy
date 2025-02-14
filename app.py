@@ -7,8 +7,8 @@ import time
 
 def menu():
     while True:
-        print('''\nPROGRAMMING BOOKS
-              \r a) A - Add a new product to the database 
+        print('''\n |WELLCOME TO THE INVENTORY
+              \r a) A - Add a new product to inventory
               \r b) B - Make a backup of the entire inventory
               \r v) V - View a single product's inventory
               \r x) Exit ''')
@@ -18,7 +18,7 @@ def menu():
         else:
             input('''
                   Please choose one of the options above.
-                  a, b, v or x for exit
+                  a, b, v or x to exit
                   Please try again. ''')
 
 
@@ -40,10 +40,30 @@ def clean_date(date_str):
     else:
         return return_date
    
+
+# def clean_price(price_str):
+#     try:
+#         slice_price = price_str[1:]
+#         float_price = float(slice_price)
+#     except ValueError:
+#         input('''
+#                 \n****** PRICE ERROR ******
+#                 \r The price should be a number without a currency symbol
+#                 \rEX: 23.8
+#                 \rPress enter to try again
+#                 \r**************************''')
+#     else:
+#         return int(float_price * 100)
+
 def clean_price(price_str):
     try:
-        slice_price = price_str[1:]
-        float_price = float(slice_price)
+        # slice_price = price_str[1:]
+        if price_str[0] == '$':
+            slice_price = price_str[1:]
+            float_price = float(slice_price)
+        else:
+            slice_price = price_str
+            float_price = float(slice_price)
     except ValueError:
         input('''
                 \n****** PRICE ERROR ******
@@ -92,17 +112,17 @@ def add_csv():
                 session.add(new_product)
         session.commit()
  # this is the function the create the backup
+
 def create_backup():
     with open('backup.csv', 'w', newline='') as csvfile:
-        fieldnames = ['product_name', 'product_price', 'product_quantity']
+        fieldnames = ['Product name', 'Product price', 'Product quantity']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
         for product in session.query(Product):
             writer.writerow({
                 'product_name': product.product_name,
-                'product_price': product.product_price / 100,
+                'product_price': (product.product_price),
                 'product_quantity': product.product_quantity,
-                # 'date_updated': product.date_updated.strftime('%m/%d/%Y')
             })
     print('Backup created successfully.')
 
@@ -113,6 +133,7 @@ def app():
     app_running = True
     while app_running:
         choice = menu()
+        choice = choice.strip()
         if   choice == 'a': # to add a product 
             product_name = input('Product name: ')
             price_error = True
@@ -144,8 +165,11 @@ def app():
                 if type(id_choice) == int:
                     id_error = False
             the_product = session.query(Product).filter(Product.id== id_choice).first()
-            print(f'{the_product.product_name} | {the_product.product_quantity} | ${the_product.product_price /100} | {the_product.date_updated}')
-            input('\nPrint enter to return to themain menu')
+            if the_product.date_updated == None:
+                print(f'| {the_product.product_name} | {the_product.product_quantity} | ${the_product.product_price /100} |')
+            else:
+                print(f'| {the_product.product_name} | {the_product.product_quantity} | ${the_product.product_price /100} | {the_product.date_updated} |')
+            input('\nPrint enter to return to the main menu')
         else:
             print('GOODBYE!')
             app_running = False
@@ -158,6 +182,4 @@ if __name__ == "__main__":
     add_csv()
     app()
 
-    # for product in session.query(Product):
-    #     print(product)
    
