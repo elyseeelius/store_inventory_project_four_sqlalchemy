@@ -105,12 +105,20 @@ def create_backup():
         fieldnames = ['Product name', 'Product price', 'Product quantity']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
+
+        # Set to keep track of product names already added to the backup
+        added_product_names = set()
+
         for product in session.query(Product):
-            writer.writerow({
-                'Product name': product.product_name,
-                'Product price': (product.product_price),
-                'Product quantity': product.product_quantity,
-            })
+            if product.product_name not in added_product_names:
+                writer.writerow({
+                    'Product name': product.product_name,
+                    'Product price': product.product_price,
+                    'Product quantity': product.product_quantity,
+                }) 
+                
+                added_product_names.add(product.product_name)
+
     print('Backup created successfully.')
 
         
@@ -179,5 +187,5 @@ if __name__ == "__main__":
     Base.metadata.create_all(engine)
     add_csv()
     app()
-
+   
    
