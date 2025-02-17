@@ -1,0 +1,2 @@
+The only issue here is it doesn't appear that the quantity property is being stored as an integer.
+I do see that you're checking for duplicates when adding the CSV, but if you want to go for Exceeds, you'll also want to check which date is most recent (larger) if a duplicate is found.

@@ -41,19 +41,6 @@ def clean_date(date_str):
         return return_date
    
 
-# def clean_price(price_str):
-#     try:
-#         slice_price = price_str[1:]
-#         float_price = float(slice_price)
-#     except ValueError:
-#         input('''
-#                 \n****** PRICE ERROR ******
-#                 \r The price should be a number without a currency symbol
-#                 \rEX: 23.8
-#                 \rPress enter to try again
-#                 \r**************************''')
-#     else:
-#         return int(float_price * 100)
 
 def clean_price(price_str):
     try:
@@ -105,7 +92,7 @@ def add_csv():
             product_in_db = session.query(Product).filter(Product.product_name==row[0]).one_or_none()
             if product_in_db == None:
                 product_name = row[0]
-                product_price = clean_price(row[1])
+                product_price = clean_price(row[1]) # to check the price
                 product_quantity = row[2]
                 date_updated = clean_date(row[3])
                 new_product = Product(product_name=product_name, product_price=product_price, product_quantity=product_quantity, date_updated= date_updated)
@@ -120,9 +107,9 @@ def create_backup():
         writer.writeheader()
         for product in session.query(Product):
             writer.writerow({
-                'product_name': product.product_name,
-                'product_price': (product.product_price),
-                'product_quantity': product.product_quantity,
+                'Product name': product.product_name,
+                'Product price': (product.product_price),
+                'Product quantity': product.product_quantity,
             })
     print('Backup created successfully.')
 
@@ -136,14 +123,25 @@ def app():
         choice = choice.strip()
         if   choice == 'a': # to add a product 
             product_name = input('Product name: ')
+            # to clean the price 
             price_error = True
             while price_error:
                 product_price = input('Product price: ')
-                product_price = clean_price(product_price)
+                product_price = clean_price(product_price) #to clean the prices 
                 if type(product_price) == int:
                     price_error = False
-            product_quantity = input('Product quantity: ')
-            date_error = True
+            print(type(product_price))
+            #end cleaning the price 
+            #to clen the quatity 
+            quantity_error = True
+            while quantity_error:
+                product_quantity = input('Product quantity: ')
+                product_quantity = clean_price(product_quantity) # is use the same clearn price funtion for the quantiy as it can do what I want, no need to create a new one
+                if type(product_quantity) == int:
+                    quantity_error = False
+            print(type(product_quantity))
+            # end quantity cleaning 
+        
             new_product = Product(product_name = product_name, product_price= product_price, product_quantity=product_quantity)
             session.add(new_product)
             session.commit()
